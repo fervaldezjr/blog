@@ -6,15 +6,24 @@
 		<description>Recent content on 🧑🏽‍💻 fervaldezjr&#39;s blog</description>
 		<generator>Hugo 0.136.4</generator>
 		<language>es-es</language>
-		<lastBuildDate>Tue, 22 Oct 2024 22:38:13 +0000</lastBuildDate>
+		<lastBuildDate>Wed, 23 Oct 2024 13:25:26 +0200</lastBuildDate>
 		<atom:link href="https://fervaldezjr.github.io/blog/index.xml" rel="self" type="application/rss+xml"/>
 		<item>
-			<title>👋🏽 ¡Hola, me alegra que estes por acá!</title>
+			<title>My First Post</title>
+			<link>https://fervaldezjr.github.io/blog/posts/about/</link>
+			<pubDate>Wed, 23 Oct 2024 13:25:26 +0200</pubDate>
+			<guid isPermaLink="true">https://fervaldezjr.github.io/blog/posts/about/</guid>
+			<description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
+&lt;p&gt;This is &lt;strong&gt;bold&lt;/strong&gt; text, and this is &lt;em&gt;emphasized&lt;/em&gt; text.&lt;/p&gt;
+&lt;p&gt;Visit the &lt;a href=&#34;https://gohugo.io&#34;&gt;Hugo&lt;/a&gt; website!&lt;/p&gt;
+</description>
+		</item>
+		<item>
+			<title>¡Hola, me alegra que estes por acá!</title>
 			<link>https://fervaldezjr.github.io/blog/about/</link>
 			<pubDate>Tue, 22 Oct 2024 22:38:13 +0000</pubDate>
 			<guid isPermaLink="true">https://fervaldezjr.github.io/blog/about/</guid>
-			<description>&lt;p&gt;&lt;img src=&#34;../static/about-me.jpeg&#34; alt=&#34;Fernando Valdez a sus 8 años con una computadora de escritorio&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Soy Fernando, vivo en Barcelona 🌊, actualmente formo parte del equipo de ingenieria de &lt;a href=&#34;https://io.builders&#34;&gt;ioBuilders&lt;/a&gt; como Product Engineer.&lt;/p&gt;
+			<description>&lt;p&gt;Soy Fernando, vivo en Barcelona 🌊, actualmente formo parte del equipo de ingenieria de &lt;a href=&#34;https://io.builders&#34;&gt;ioBuilders&lt;/a&gt; como Product Engineer.&lt;/p&gt;
 &lt;p&gt;Me apasiona el aprendizaje continuo, enfrentar nuevos desafíos y compartir el conocimiento que adquiero a lo largo de mi carrera. Con más de 3 años de experiencia profesional, he diseñado y construido software tanto en Frontend como en Backend.&lt;/p&gt;
 &lt;p&gt;En el lado del Backend, manejo tecnologías como Java, Groovy y Node.js, mientras que en Frontend trabajo con JavaScript, TypeScript, React y React Native. Además, tengo amplia experiencia escribiendo pruebas automatizadas y unitarias utilizando herramientas como Spock, Jest, Testing Library y K6 para pruebas de rendimiento.&lt;/p&gt;
 &lt;p&gt;En cuanto a infraestructura, he trabajado con Amazon AWS, ArgoCD, Grafana, Docker y Kubernetes, gestionando entornos escalables y bien monitoreados. Utilizo PostgreSQL como base de datos y manejo colas de mensajería como RabbitMQ. Además, gestiono el control de versiones con Git.&lt;/p&gt;
