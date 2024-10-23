@@ -2,16 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://fervaldezjr.github.io/ferval-blog/about/</loc>
+    <loc>https://fervaldezjr.github.io/blog/about/</loc>
     <lastmod>2024-10-22T22:38:13+00:00</lastmod>
   </url><url>
-    <loc>https://fervaldezjr.github.io/ferval-blog/</loc>
+    <loc>https://fervaldezjr.github.io/blog/</loc>
     <lastmod>2024-10-22T22:38:13+00:00</lastmod>
   </url><url>
-    <loc>https://fervaldezjr.github.io/ferval-blog/categories/</loc>
+    <loc>https://fervaldezjr.github.io/blog/categories/</loc>
   </url><url>
-    <loc>https://fervaldezjr.github.io/ferval-blog/posts/</loc>
+    <loc>https://fervaldezjr.github.io/blog/posts/</loc>
   </url><url>
-    <loc>https://fervaldezjr.github.io/ferval-blog/tags/</loc>
+    <loc>https://fervaldezjr.github.io/blog/tags/</loc>
   </url>
 </urlset>
