@@ -9,13 +9,162 @@
 		<lastBuildDate>Wed, 23 Oct 2024 13:25:26 +0200</lastBuildDate>
 		<atom:link href="https://fervaldezjr.github.io/blog/posts/index.xml" rel="self" type="application/rss+xml"/>
 		<item>
-			<title>My First Post</title>
-			<link>https://fervaldezjr.github.io/blog/posts/about/</link>
+			<title>Utilizando RabbitMQ para la comunicación entre servicios</title>
+			<link>https://fervaldezjr.github.io/blog/posts/utilizando-rabbitmq-para-la-comunicacion-entre-servicios/</link>
 			<pubDate>Wed, 23 Oct 2024 13:25:26 +0200</pubDate>
-			<guid isPermaLink="true">https://fervaldezjr.github.io/blog/posts/about/</guid>
-			<description>&lt;h2 id=&#34;introduction&#34;&gt;Introduction&lt;/h2&gt;
-&lt;p&gt;This is &lt;strong&gt;bold&lt;/strong&gt; text, and this is &lt;em&gt;emphasized&lt;/em&gt; text.&lt;/p&gt;
-&lt;p&gt;Visit the &lt;a href=&#34;https://gohugo.io&#34;&gt;Hugo&lt;/a&gt; website!&lt;/p&gt;
+			<guid isPermaLink="true">https://fervaldezjr.github.io/blog/posts/utilizando-rabbitmq-para-la-comunicacion-entre-servicios/</guid>
+			<description>&lt;h2 id=&#34;introducción&#34;&gt;Introducción&lt;/h2&gt;
+&lt;p&gt;Cuando trabajamos con múltiples microservicios que necesitan comunicarse entre sí, &lt;a href=&#34;https://www.rabbitmq.com/&#34;&gt;RabbitMQ&lt;/a&gt; es una herramienta excelente para gestionar la mensajería entre ellos.&lt;/p&gt;
+&lt;p&gt;A continuación, enseñaré uno de los posibles flujos de trabajo básico utilizando esta &lt;a href=&#34;https://aws.amazon.com/es/message-queue/#:~:text=Una%20cola%20de%20mensajes%20es,sola%2C%20por%20un%20solo%20consumidor.&#34;&gt;cola de mensajería&lt;/a&gt; y como ejemplo usaré un sistema de comercio electrónico en el que tenemos un microservicio encargado de gestionar pedidos y otro encargado de notificar a los usuarios.&lt;/p&gt;
+
+
+
+&lt;div class=&#34;goat svg-container &#34;&gt;
+  
+    &lt;svg
+      xmlns=&#34;http://www.w3.org/2000/svg&#34;
+      font-family=&#34;Menlo,Lucida Console,monospace&#34;
+      
+        viewBox=&#34;0 0 760 217&#34;
+      &gt;
+      &lt;g transform=&#39;translate(8,16)&#39;&gt;
+&lt;path d=&#39;M 0,0 L 96,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 216,0 L 328,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 448,0 L 560,0&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 0,32 L 96,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 216,32 L 328,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 448,32 L 560,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,80 L 264,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 280,128 L 504,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 520,192 L 744,192&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 0,0 L 0,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,48 L 40,80&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 96,0 L 96,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 216,0 L 216,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 280,48 L 280,128&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 328,0 L 328,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 448,0 L 448,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 520,48 L 520,192&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 560,0 L 560,32&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 40,40 L 40,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 280,40 L 280,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;path d=&#39;M 520,40 L 520,48&#39; fill=&#39;none&#39; stroke=&#39;currentColor&#39;&gt;&lt;/path&gt;
+&lt;polygon points=&#39;272.000000,80.000000 260.000000,74.400002 260.000000,85.599998&#39; fill=&#39;currentColor&#39; transform=&#39;rotate(0.000000, 264.000000, 80.000000)&#39;&gt;&lt;/polygon&gt;
+&lt;polygon points=&#39;512.000000,128.000000 500.000000,122.400002 500.000000,133.600006&#39; fill=&#39;currentColor&#39; transform=&#39;rotate(0.000000, 504.000000, 128.000000)&#39;&gt;&lt;/polygon&gt;
+&lt;polygon points=&#39;752.000000,192.000000 740.000000,186.399994 740.000000,197.600006&#39; fill=&#39;currentColor&#39; transform=&#39;rotate(0.000000, 744.000000, 192.000000)&#39;&gt;&lt;/polygon&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;24&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;C&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;32&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;40&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;48&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;56&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;56&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;R&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;64&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;72&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;80&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;88&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;96&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;z&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;104&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;120&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;128&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;144&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;p&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;152&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;160&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;168&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;176&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;184&#39; y=&#39;68&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;232&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;240&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;248&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;256&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;264&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;272&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;S&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;280&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;288&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;296&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;296&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;304&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;304&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;312&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;c&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;312&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;b&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;320&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;320&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;328&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;336&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;c&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;344&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;360&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;O&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;368&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;376&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;384&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;392&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;400&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;P&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;408&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;416&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;424&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;c&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;432&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;440&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;448&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;E&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;456&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;464&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;472&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;R&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;472&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;480&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;480&#39; y=&#39;116&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;488&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;b&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;496&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;b&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;504&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;i&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;512&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;520&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;M&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;528&#39; y=&#39;20&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;Q&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;536&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;E&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;536&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;544&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;v&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;544&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;552&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;552&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;560&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;560&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;568&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;t&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;568&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;576&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;576&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;s&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;584&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;.&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;592&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;592&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;600&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;600&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;608&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;m&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;608&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;616&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;616&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;624&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;c&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;624&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;r&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;632&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;632&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;.&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;640&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;640&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;p&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;648&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;648&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;l&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;656&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;656&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;a&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;664&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;o&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;664&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;c&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;672&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;680&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;680&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;d&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;688&#39; y=&#39;164&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;n&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;688&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;.&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;696&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;q&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;704&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;712&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;720&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;u&lt;/text&gt;
+&lt;text text-anchor=&#39;middle&#39; x=&#39;728&#39; y=&#39;180&#39; fill=&#39;currentColor&#39; style=&#39;font-size:1em&#39;&gt;e&lt;/text&gt;
+&lt;/g&gt;
+
+    &lt;/svg&gt;
+  
+&lt;/div&gt;
 </description>
 		</item>
 	</channel>

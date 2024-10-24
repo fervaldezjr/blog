@@ -2,10 +2,19 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://fervaldezjr.github.io/blog/categories/</loc>
+    <lastmod>2024-10-23T13:25:26+02:00</lastmod>
+  </url><url>
     <loc>https://fervaldezjr.github.io/blog/posts/</loc>
     <lastmod>2024-10-23T13:25:26+02:00</lastmod>
   </url><url>
-    <loc>https://fervaldezjr.github.io/blog/posts/about/</loc>
+    <loc>https://fervaldezjr.github.io/blog/categories/event-driven-architecture/</loc>
+    <lastmod>2024-10-23T13:25:26+02:00</lastmod>
+  </url><url>
+    <loc>https://fervaldezjr.github.io/blog/categories/rabbitmq/</loc>
+    <lastmod>2024-10-23T13:25:26+02:00</lastmod>
+  </url><url>
+    <loc>https://fervaldezjr.github.io/blog/posts/utilizando-rabbitmq-para-la-comunicacion-entre-servicios/</loc>
     <lastmod>2024-10-23T13:25:26+02:00</lastmod>
   </url><url>
     <loc>https://fervaldezjr.github.io/blog/</loc>
@@ -13,8 +22,6 @@
   </url><url>
     <loc>https://fervaldezjr.github.io/blog/about/</loc>
     <lastmod>2024-10-22T22:38:13+00:00</lastmod>
-  </url><url>
-    <loc>https://fervaldezjr.github.io/blog/categories/</loc>
   </url><url>
     <loc>https://fervaldezjr.github.io/blog/tags/</loc>
   </url>
